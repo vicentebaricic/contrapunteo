@@ -258,10 +258,12 @@ ul, ol { margin: 0; padding: 0; list-style: none; }
 }
 .header__inner { display: flex; align-items: center; justify-content: space-between; gap: var(--sp-4); }
 .brand { display: inline-flex; align-items: center; gap: var(--sp-3); text-decoration: none; min-height: 44px; }
-.brand__logo { height: 44px; width: auto; }
-.brand__mark { width: 34px; height: 34px; color: var(--gold-fixed); flex-shrink: 0; }
+.brand__mark { display: inline-flex; height: 40px; flex-shrink: 0; }
+.brand__mark img { height: 100%; width: auto; }
+.brand__mark .lg-cafe { display: none; }
+:root[data-theme="light"] .header.is-scrolled .brand__mark .lg-gold { display: none; }
+:root[data-theme="light"] .header.is-scrolled .brand__mark .lg-cafe { display: block; }
 .brand__text { font-family: var(--font-display); font-size: 1.35rem; letter-spacing: .01em; line-height: 1; }
-.brand.has-logo .brand__mark, .brand.has-logo .brand__text { display: none; }
 
 .nav { display: none; }
 .nav__list { display: flex; gap: clamp(.75rem, 1.6vw, 1.75rem); align-items: center; }
@@ -332,6 +334,7 @@ ul, ol { margin: 0; padding: 0; list-style: none; }
     radial-gradient(40% 35% at 25% 85%, rgba(227, 167, 47, .25), transparent 70%),
     linear-gradient(180deg, #1c140d, #0d0906);
 }
+.hero__fallback::after { content: ""; position: absolute; inset: 0; background: url("assets/hero-poster.jpg") center / cover no-repeat; }
 .hero::after {
   content: ""; position: absolute; inset: 0; z-index: -1;
   background:
@@ -357,7 +360,7 @@ ul, ol { margin: 0; padding: 0; list-style: none; }
 }
 .stamp svg { width: 100%; height: 100%; animation: spin 28s linear infinite; }
 .stamp__core { position: absolute; inset: 0; display: grid; place-items: center; }
-.stamp__core svg { width: 46px; height: 46px; animation: none; }
+.stamp__core img { width: auto; height: 58px; }
 @keyframes spin { to { transform: rotate(360deg); } }
 .scroll-cue {
   position: absolute; left: 50%; bottom: var(--sp-5); transform: translateX(-50%);
@@ -446,31 +449,24 @@ ul, ol { margin: 0; padding: 0; list-style: none; }
 .fusion { background: var(--night); color: var(--cream-fixed); overflow: hidden; }
 .fusion .h2 { color: #fff8ea; }
 .fusion .muted { color: #cdbb9d; }
-.fusion__bigword {
-  position: absolute; right: -2vw; top: 50%; transform: translateY(-50%);
-  font-family: var(--font-display); font-size: clamp(6rem, 18vw, 16rem); line-height: .8;
-  color: transparent; -webkit-text-stroke: 1.5px rgba(227,167,47,.18); pointer-events: none; user-select: none;
-  writing-mode: vertical-rl; display: none;
-}
-@media (min-width: 1100px) { .fusion__bigword { display: block; } }
-.coplas { display: grid; gap: var(--sp-5); counter-reset: copla; position: relative; }
+.fusion__grid { display: grid; gap: clamp(1.5rem, 4vw, 3.5rem); align-items: center; }
+.fusion__img { aspect-ratio: 4 / 5; border: 3px solid var(--gold-fixed); box-shadow: 10px 10px 0 rgba(227,167,47,.25); background: #2a2019; }
+.fusion__img.is-missing::after { color: #cdbb9d; }
+.coplas { display: grid; gap: var(--sp-4); }
 .copla {
-  display: grid; gap: var(--sp-4);
-  background: #1f1812; border: 1px solid rgba(227,167,47,.18); border-radius: var(--radius);
-  overflow: hidden;
+  display: grid; grid-template-columns: auto 1fr; gap: var(--sp-5); align-items: start;
+  background: #1f1812; border: 1px solid rgba(227,167,47,.18); border-left: 4px solid var(--gold-fixed);
+  border-radius: var(--radius-sm); padding: var(--sp-5);
 }
-.copla .ph { aspect-ratio: 4 / 3; border-radius: 0; background: #2a2019; }
-.copla .ph.is-missing::after { color: #cdbb9d; }
-.copla__body { padding: 0 var(--sp-5) var(--sp-5); }
-.copla__num { font-family: var(--font-display); color: var(--gold-fixed); font-size: 2.4rem; line-height: 1; margin-bottom: var(--sp-2); display: block; }
+.copla__num { font-family: var(--font-display); color: var(--gold-fixed); font-size: 2.6rem; line-height: 1; }
 .copla h3 { font-family: var(--font-display); font-size: 1.45rem; color: #fff8ea; margin-bottom: var(--sp-2); }
 .copla p { color: #d6c6a9; font-size: var(--fs-sm); }
+@media (min-width: 900px) { .fusion__grid { grid-template-columns: .9fr 1.1fr; } }
 .fusion__verse {
   margin-top: clamp(2.5rem, 5vw, 4rem); text-align: center; font-family: var(--font-hand);
   font-size: clamp(1.6rem, 1.2rem + 1.6vw, 2.5rem); color: var(--gold-fixed); line-height: 1.3;
 }
 .fusion__verse small { display: block; font-family: var(--font-body); font-size: var(--fs-xs); letter-spacing: .2em; text-transform: uppercase; color: #bba88a; margin-top: var(--sp-3); }
-@media (min-width: 800px) { .coplas { grid-template-columns: repeat(3, 1fr); } .copla:nth-child(2) { margin-top: 2.5rem; } }
 
 /* =========================================================
    CARTA
@@ -737,7 +733,6 @@ ul, ol { margin: 0; padding: 0; list-style: none; }
   <symbol id="i-menu" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 7h16M4 12h16M4 17h10"/></symbol>
   <symbol id="i-x" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M6 6l12 12M18 6 6 18"/></symbol>
   <symbol id="i-down" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></symbol>
-  <symbol id="i-mark" viewBox="0 0 48 48"><circle cx="24" cy="24" r="22" fill="none" stroke="currentColor" stroke-width="2.5"/><path fill="currentColor" d="M24 9c1.2 4.3 5.6 7.4 7.4 11.6 2.1 4.9-.4 11.4-7.4 11.4s-9.5-6.5-7.4-11.4c.8-1.9 2.2-3.2 3.3-4.6.3 2.2 1.3 3.8 3 4.7-.6-4.1-.1-8 1.1-11.7z"/><path d="M11 37h26" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/><path d="M15 33.5 33 40.5M33 33.5 15 40.5" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></symbol>
   <symbol id="i-google" viewBox="0 0 24 24"><path fill="#4285F4" d="M23.49 12.27c0-.79-.07-1.54-.19-2.27H12v4.51h6.47c-.29 1.48-1.14 2.73-2.4 3.58v3h3.86c2.26-2.09 3.56-5.17 3.56-8.82z"/><path fill="#34A853" d="M12 24c3.24 0 5.95-1.08 7.93-2.91l-3.86-3c-1.08.72-2.45 1.16-4.07 1.16-3.13 0-5.78-2.11-6.73-4.96H1.29v3.09C3.26 21.3 7.31 24 12 24z"/><path fill="#FBBC05" d="M5.27 14.29c-.25-.72-.38-1.49-.38-2.29s.14-1.57.38-2.29V6.62H1.29C.47 8.24 0 10.06 0 12s.47 3.76 1.29 5.38l3.98-3.09z"/><path fill="#EA4335" d="M12 4.75c1.77 0 3.35.61 4.6 1.8l3.42-3.42C17.95 1.19 15.24 0 12 0 7.31 0 3.26 2.7 1.29 6.62l3.98 3.09c.95-2.85 3.6-4.96 6.73-4.96z"/></symbol>
 </svg>
 
@@ -747,8 +742,7 @@ ul, ol { margin: 0; padding: 0; list-style: none; }
 <header class="header" id="header">
   <div class="container header__inner">
     <a class="brand" href="#inicio" aria-label="Contrapunteo, ir al inicio">
-      <img class="brand__logo js-logo" src="assets/logo.png" alt="" width="140" height="44" hidden>
-      <svg class="brand__mark" aria-hidden="true"><use href="#i-mark"/></svg>
+      <span class="brand__mark" aria-hidden="true"><img class="lg-gold" src="assets/logo/logo-dorado.png" alt="" width="123" height="160"><img class="lg-cafe" src="assets/logo/logo-cafe.png" alt="" width="123" height="160"></span>
       <span class="brand__text">Contrapunteo</span>
     </a>
 
@@ -779,7 +773,7 @@ ul, ol { margin: 0; padding: 0; list-style: none; }
 <!-- Menú móvil -->
 <div class="mnav" id="mnav" aria-label="Menú" role="dialog" aria-modal="true">
   <div class="mnav__top">
-    <span class="brand"><svg class="brand__mark" aria-hidden="true"><use href="#i-mark"/></svg><span class="brand__text">Contrapunteo</span></span>
+    <span class="brand"><span class="brand__mark" aria-hidden="true"><img class="lg-gold" src="assets/logo/logo-dorado.png" alt="" width="123" height="160"><img class="lg-cafe" src="assets/logo/logo-cafe.png" alt="" width="123" height="160"></span><span class="brand__text">Contrapunteo</span></span>
     <button class="icon-btn" type="button" aria-label="Cerrar menú" id="navClose"><svg aria-hidden="true"><use href="#i-x"/></svg></button>
   </div>
   <ul class="mnav__list">
@@ -804,7 +798,6 @@ ul, ol { margin: 0; padding: 0; list-style: none; }
   <div class="hero__media" aria-hidden="true">
     <div class="hero__fallback"></div>
     <video id="heroVideo" autoplay muted loop playsinline preload="metadata" poster="assets/hero-poster.jpg">
-      <source src="assets/hero.webm" type="video/webm">
       <source src="assets/hero.mp4" type="video/mp4">
     </video>
   </div>
@@ -817,7 +810,7 @@ ul, ol { margin: 0; padding: 0; list-style: none; }
         <textPath href="#circ">CARNE EN VARA ✦ CHICUREO ✦ COLINA ✦ </textPath>
       </text>
     </svg>
-    <div class="stamp__core"><svg><use href="#i-flame"/></svg></div>
+    <div class="stamp__core"><img src="assets/logo/logo-dorado.png" alt="" width="123" height="160"></div>
   </div>
 
   <div class="container hero__content">
@@ -840,8 +833,8 @@ ul, ol { margin: 0; padding: 0; list-style: none; }
 <!-- Marquesina -->
 <div class="marquee" aria-hidden="true">
   <div class="marquee__track">
-    <span>Carne en vara</span><span>Arepas</span><span>Tequeños</span><span>Pabellón criollo</span><span>Joropo</span><span>Papelón con limón</span><span>Guasacaca</span><span>Quesillo</span>
-    <span>Carne en vara</span><span>Arepas</span><span>Tequeños</span><span>Pabellón criollo</span><span>Joropo</span><span>Papelón con limón</span><span>Guasacaca</span><span>Quesillo</span>
+    <span>Carne en vara</span><span>Arepas</span><span>Cachapas</span><span>Tequeños</span><span>Pabellón criollo</span><span>Joropo</span><span>Papelón con limón</span><span>Guasacaca</span><span>Quesillo</span>
+    <span>Carne en vara</span><span>Arepas</span><span>Cachapas</span><span>Tequeños</span><span>Pabellón criollo</span><span>Joropo</span><span>Papelón con limón</span><span>Guasacaca</span><span>Quesillo</span>
   </div>
 </div>
 
@@ -861,7 +854,7 @@ ul, ol { margin: 0; padding: 0; list-style: none; }
         </li>
         <li class="pillar reveal" style="--d:90ms">
           <span class="pillar__icon"><svg aria-hidden="true"><use href="#i-arepa"/></svg></span>
-          <div><h3>Sabor venezolano</h3><p>Arepas, tequeños y recetas criollas hechas como en casa.</p></div>
+          <div><h3>Sabor venezolano</h3><p>Arepas, cachapas, tequeños y recetas criollas hechas como en casa.</p></div>
         </li>
         <li class="pillar reveal" style="--d:180ms">
           <span class="pillar__icon"><svg aria-hidden="true"><use href="#i-music"/></svg></span>
@@ -872,16 +865,15 @@ ul, ol { margin: 0; padding: 0; list-style: none; }
     </div>
 
     <div class="collage">
-      <figure class="ph reveal reveal--zoom" data-ph="assets/nosotros/nosotros-1.jpg"><img src="assets/nosotros/nosotros-1.jpg" alt="Salón de Contrapunteo con mesas llenas y ambiente festivo" loading="lazy" width="900" height="1100"></figure>
-      <figure class="ph reveal reveal--zoom" style="--d:120ms" data-ph="assets/nosotros/nosotros-2.jpg"><img src="assets/nosotros/nosotros-2.jpg" alt="Arepas recién hechas servidas en la mesa" loading="lazy" width="700" height="700"></figure>
-      <figure class="ph reveal reveal--zoom" style="--d:220ms" data-ph="assets/nosotros/nosotros-3.jpg"><img src="assets/nosotros/nosotros-3.jpg" alt="Carne asándose en vara junto al fuego de leña" loading="lazy" width="700" height="700"></figure>
+      <figure class="ph reveal reveal--zoom" data-ph="assets/nosotros/nosotros-1.jpg"><img src="assets/nosotros/nosotros-1.jpg" alt="Carne a la parrilla entre las llamas" loading="lazy" width="1000" height="1333"></figure>
+      <figure class="ph reveal reveal--zoom" style="--d:120ms" data-ph="assets/nosotros/nosotros-2.jpg"><img src="assets/nosotros/nosotros-2.jpg" alt="Cocinero atento al fuego de leña" loading="lazy" width="900" height="900"></figure>
+      <figure class="ph reveal reveal--zoom" style="--d:220ms" data-ph="assets/nosotros/nosotros-3.jpg"><img src="assets/nosotros/nosotros-3.jpg" alt="Cachapa rellena de carne con cebolla y cilantro" loading="lazy" width="640" height="640"></figure>
     </div>
   </div>
 </section>
 
 <!-- ============ 3. LA FUSIÓN (sección propuesta) ============ -->
 <section class="section fusion" id="fusion" aria-labelledby="fusion-title">
-  <span class="fusion__bigword" aria-hidden="true">LA VARA</span>
   <div class="container">
     <div class="section-head">
       <span class="eyebrow reveal">La fusión</span>
@@ -890,32 +882,26 @@ ul, ol { margin: 0; padding: 0; list-style: none; }
       <span class="sample reveal" style="--d:180ms">Contenido de ejemplo · proceso y tiempos de cocción</span>
     </div>
 
-    <ol class="coplas">
-      <li class="copla reveal" style="--d:0ms">
-        <figure class="ph" data-ph="assets/fusion/fusion-1.jpg"><img src="assets/fusion/fusion-1.jpg" alt="Cortes de carne ensartados en varas junto a las brasas" loading="lazy" width="800" height="600"></figure>
-        <div class="copla__body">
+    <div class="fusion__grid">
+      <figure class="ph fusion__img reveal reveal--left" data-ph="assets/fusion/fusion.jpg"><img src="assets/fusion/fusion.jpg" alt="Carne asándose en vara junto a las brasas" loading="lazy" width="1000" height="1250"></figure>
+      <ol class="coplas">
+        <li class="copla reveal" style="--d:0ms">
           <span class="copla__num">01</span>
-          <h3>La vara</h3>
-          <p>Cortes enteros ensartados en varas de madera, parados junto a las brasas de leña durante horas. Sin apuro, como se hace en el llano.</p>
-        </div>
-      </li>
-      <li class="copla reveal" style="--d:120ms">
-        <figure class="ph" data-ph="assets/fusion/fusion-2.jpg"><img src="assets/fusion/fusion-2.jpg" alt="Aliños y salsa guasacaca preparados en la cocina" loading="lazy" width="800" height="600"></figure>
-        <div class="copla__body">
+          <div><h3>La vara</h3>
+          <p>Cortes enteros ensartados en varas de madera, parados junto a las brasas de leña durante horas. Sin apuro, como se hace en el llano.</p></div>
+        </li>
+        <li class="copla reveal" style="--d:120ms">
           <span class="copla__num">02</span>
-          <h3>La sazón</h3>
-          <p>Sal gruesa, ajo, onoto y el aliño de la casa. Al final, guasacaca fresca: la salsa verde que no puede faltar.</p>
-        </div>
-      </li>
-      <li class="copla reveal" style="--d:240ms">
-        <figure class="ph" data-ph="assets/fusion/fusion-3.jpg"><img src="assets/fusion/fusion-3.jpg" alt="Plato servido con carne, yuca, arepa y tajadas" loading="lazy" width="800" height="600"></figure>
-        <div class="copla__body">
+          <div><h3>La sazón</h3>
+          <p>Sal gruesa, ajo, onoto y el aliño de la casa. Al final, guasacaca fresca: la salsa verde que no puede faltar.</p></div>
+        </li>
+        <li class="copla reveal" style="--d:240ms">
           <span class="copla__num">03</span>
-          <h3>La mesa</h3>
-          <p>Yuca, arepitas, tajadas y ensalada. Todo al centro para compartir, porque aquí se come en familia.</p>
-        </div>
-      </li>
-    </ol>
+          <div><h3>La mesa</h3>
+          <p>Yuca, arepitas, tajadas y ensalada. Todo al centro para compartir, porque aquí se come en familia.</p></div>
+        </li>
+      </ol>
+    </div>
 
     <p class="fusion__verse reveal">“La carne en vara no se apura… se conversa.”<small>Dicho de la casa</small></p>
     <div class="btn-row reveal" style="justify-content:center;margin-top:var(--sp-6)">
@@ -958,7 +944,7 @@ ul, ol { margin: 0; padding: 0; list-style: none; }
   <div class="container chef">
     <div class="chef__photo reveal reveal--left">
       <span class="chef__tape" aria-hidden="true"></span>
-      <figure class="ph" data-ph="assets/chef/chef.jpg"><img src="assets/chef/chef.jpg" alt="Retrato del chef de Contrapunteo junto al fogón" loading="lazy" width="800" height="1000"></figure>
+      <figure class="ph" data-ph="assets/chef/chef.jpg"><img src="assets/chef/chef.jpg" alt="Retrato del chef de Contrapunteo junto al fogón" loading="lazy" width="900" height="1125"></figure>
       <span class="chef__sign" aria-hidden="true">José G.</span>
     </div>
     <div>
@@ -980,7 +966,8 @@ ul, ol { margin: 0; padding: 0; list-style: none; }
 </section>
 
 <!-- ============ 6. GALERÍA ============ -->
-<section class="section" id="galeria" aria-labelledby="gal-title">
+<!-- Galería oculta hasta tener más fotos: quita el atributo "hidden" y sube assets/galeria/galeria-1.jpg … galeria-6.jpg -->
+<section class="section" id="galeria" aria-labelledby="gal-title" hidden>
   <div class="container">
     <div class="section-head section-head--center">
       <span class="eyebrow reveal">El ambiente</span>
@@ -1093,7 +1080,7 @@ ul, ol { margin: 0; padding: 0; list-style: none; }
   <div class="container">
     <div class="footer__grid">
       <div>
-        <a class="brand" href="#inicio"><svg class="brand__mark" aria-hidden="true"><use href="#i-mark"/></svg><span class="brand__text">Contrapunteo</span></a>
+        <a class="brand" href="#inicio"><span class="brand__mark" aria-hidden="true"><img class="lg-gold" src="assets/logo/logo-dorado.png" alt="" width="123" height="160"><img class="lg-cafe" src="assets/logo/logo-cafe.png" alt="" width="123" height="160"></span><span class="brand__text">Contrapunteo</span></a>
         <p>Asados con alma venezolana: carnes en vara, arepas y música en el corazón de Chicureo.</p>
       </div>
       <div>
@@ -1177,6 +1164,7 @@ const MENU = [
       { n: 'Costilla en vara · 500 g', d: 'Jugosa, dorada y con su grasita crocante.', p: 17900 },
       { n: 'Punta de anca a la llanera · 350 g', d: 'Con sal gruesa y chimichurri criollo.', p: 18900 },
       { n: 'Pollo en vara · medio', d: 'Adobado con onoto, ajo y comino.', p: 13900 },
+      { n: 'Cachapa con carne en vara', d: 'Masa dulce de maíz tierno, queso de mano y carne en vara desmenuzada, con cebolla y cilantro.', p: 12900 },
       { n: 'Pabellón criollo', d: 'Carne mechada, caraotas negras, arroz blanco y tajadas de plátano maduro.', p: 13900 },
       { n: 'Asado negro', d: 'Muchacho redondo en salsa de papelón, con arroz y plátano.', p: 15900 },
       { n: 'Parrillada para dos', d: 'Ternera, costilla, chorizo carupanero y pollo, con dos acompañamientos.', p: 38900 }
@@ -1304,13 +1292,6 @@ function bindWa(root) {
   });
   syncThemeLabel();
 
-  /* ---- Logo opcional: si existe assets/logo.png reemplaza al wordmark ---- */
-  var logo = document.querySelector('.js-logo');
-  if (logo) {
-    var showLogo = function () { if (logo.naturalWidth > 0) { logo.hidden = false; logo.closest('.brand').classList.add('has-logo'); } };
-    if (logo.complete) showLogo(); else logo.addEventListener('load', showLogo);
-  }
-
   /* ---- Placeholders para imágenes aún no subidas ---- */
   function watchImg(img) {
     var fig = img.closest('.ph');
@@ -1326,9 +1307,6 @@ function bindWa(root) {
   var video = document.getElementById('heroVideo');
   if (video) {
     if (reduceMotion) { video.removeAttribute('autoplay'); video.pause(); }
-    var sources = video.querySelectorAll('source');
-    var last = sources[sources.length - 1];
-    last.addEventListener('error', function () { video.style.display = 'none'; });
   }
 
   /* ---- Header al hacer scroll + WhatsApp flotante ---- */
