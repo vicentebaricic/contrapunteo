@@ -346,8 +346,6 @@ ul, ol { margin: 0; padding: 0; list-style: none; }
 /* Scroll-scrub: el hero queda fijo mientras el video avanza */
 .js .hero-scroll { height: 240svh; position: relative; }
 .js .hero-scroll .hero { position: sticky; top: 0; height: 100svh; min-height: 0; }
-.js .hero-scroll.is-static { height: auto; }
-.js .hero-scroll.is-static .hero { position: relative; height: auto; min-height: 100svh; }
 .hero__content { transform: translateY(calc(var(--p, 0) * -40px)); opacity: calc(1 - max(0, var(--p, 0) - .75) * 2.4); }
 .hero__progress {
   position: absolute; left: 0; bottom: 0; height: 3px; width: 100%;
@@ -1320,44 +1318,53 @@ function bindWa(root) {
   document.querySelectorAll('.ph img').forEach(watchImg);
 
   /* ---- Video hero ---- */
-  /* ---- Video del hero controlado por el scroll ---- */
+  /* ---- Video del hero controlado por el scroll ----
+     El video se descarga completo (blob) para que el seek sea instantáneo y confiable.
+     Funciona también con "reducir movimiento": el video solo avanza cuando la persona hace scroll. */
   var video = document.getElementById('heroVideo');
   var heroWrap = document.getElementById('heroScroll');
   var hero = document.getElementById('inicio');
   if (video && heroWrap) {
-    var movil = window.matchMedia('(max-width: 800px)').matches;
-    video.src = movil ? video.dataset.srcMovil : video.dataset.src;
-    if (reduceMotion) {
-      heroWrap.classList.add('is-static');           // sin movimiento: queda el póster
-      video.preload = 'none';
+    var src = window.matchMedia('(max-width: 800px)').matches ? video.dataset.srcMovil : video.dataset.src;
+    var ready = false, cur = 0, raf = null;
+    var progress = function () {
+      var total = heroWrap.offsetHeight - window.innerHeight;
+      if (total <= 0) return 0;
+      return Math.min(1, Math.max(0, -heroWrap.getBoundingClientRect().top / total));
+    };
+    var tick = function () {
+      raf = null;
+      var p = progress();
+      hero.style.setProperty('--p', p.toFixed(4));
+      if (!ready || !video.duration) return;
+      var target = p * (video.duration - 0.05);
+      cur += (target - cur) * (reduceMotion ? 1 : 0.2);   // suavizado
+      if (Math.abs(target - cur) < 0.005) cur = target;
+      if (!video.seeking && Math.abs(video.currentTime - cur) > 0.015) video.currentTime = cur;
+      if (cur !== target) raf = requestAnimationFrame(tick);
+    };
+    var request = function () { if (!raf) raf = requestAnimationFrame(tick); };
+    var start = function (url) {
+      video.src = url;
+      video.load();
+      video.addEventListener('loadeddata', function () {
+        /* iOS/Safari: play()+pause() inicial habilita el dibujado de cuadros al hacer seek */
+        var pr = video.play();
+        var done = function () { video.pause(); ready = true; request(); };
+        if (pr && pr.then) pr.then(done).catch(done); else done();
+      }, { once: true });
+    };
+    video.pause();
+    video.addEventListener('seeked', request);
+    window.addEventListener('scroll', request, { passive: true });
+    window.addEventListener('resize', request);
+    request();
+    if (window.fetch && window.URL && location.protocol !== 'file:') {
+      fetch(src).then(function (r) { if (!r.ok) throw 0; return r.blob(); })
+        .then(function (b) { start(URL.createObjectURL(b)); })
+        .catch(function () { start(src); });
     } else {
-      var ready = false, cur = 0, raf = null;
-      var progress = function () {
-        var total = heroWrap.offsetHeight - window.innerHeight;
-        if (total <= 0) return 0;
-        return Math.min(1, Math.max(0, -heroWrap.getBoundingClientRect().top / total));
-      };
-      var tick = function () {
-        raf = null;
-        var p = progress();
-        hero.style.setProperty('--p', p.toFixed(4));
-        if (!ready) return;
-        var target = p * (video.duration - 0.05);
-        cur += (target - cur) * 0.2;                    // suavizado
-        if (Math.abs(target - cur) < 0.005) cur = target;
-        if (!video.seeking && Math.abs(video.currentTime - cur) > 0.015) video.currentTime = cur;
-        if (cur !== target) raf = requestAnimationFrame(tick);
-      };
-      var request = function () { if (!raf) raf = requestAnimationFrame(tick); };
-      video.addEventListener('loadedmetadata', function () { ready = true; request(); });
-      video.addEventListener('seeked', request);
-      /* iOS/Safari: un play()+pause() inicial habilita el dibujado de cuadros al hacer seek */
-      var pr = video.play();
-      if (pr && pr.then) pr.then(function () { video.pause(); request(); }).catch(function () {});
-      else video.pause();
-      window.addEventListener('scroll', request, { passive: true });
-      window.addEventListener('resize', request);
-      request();
+      start(src);
     }
   }
 
