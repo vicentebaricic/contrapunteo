@@ -344,15 +344,15 @@ ul, ol { margin: 0; padding: 0; list-style: none; }
     linear-gradient(180deg, rgba(18,14,10,.65) 0%, rgba(18,14,10,.15) 35%, rgba(18,14,10,.55) 65%, rgba(18,14,10,.95) 100%);
 }
 .hero__content { padding-block: 8rem clamp(3.5rem, 8vw, 6rem); }
-/* Scroll-scrub: el hero queda fijo mientras el video avanza */
-.js .hero-scroll { height: 240svh; position: relative; }
-.js .hero-scroll .hero { position: sticky; top: 0; height: 100svh; min-height: 0; }
-.hero__content { transform: translateY(calc(var(--p, 0) * -40px)); opacity: calc(1 - max(0, var(--p, 0) - .75) * 2.4); }
+/* Scroll: la portada baja normal; el video avanza mientras sale de pantalla.
+   Parallax: el fondo baja más lento que el texto (--p va de 0 a 1). */
+.hero__media { transform: translate3d(0, calc(var(--p, 0) * 45svh), 0); will-change: transform; }
+.hero__content { transform: translate3d(0, calc(var(--p, 0) * -8svh), 0); }
+@media (prefers-reduced-motion: reduce) { .hero__media, .hero__content { transform: none; } }
 .hero__progress {
   position: absolute; left: 0; bottom: 0; height: 3px; width: 100%;
   background: var(--gold-fixed); transform-origin: left; transform: scaleX(var(--p, 0));
 }
-@media (max-width: 800px) { .js .hero-scroll { height: 200svh; } }
 .hero__hello { font-family: var(--font-hand); color: var(--gold-fixed); font-size: clamp(1.6rem, 1.2rem + 1.5vw, 2.4rem); transform: rotate(-3deg); display: inline-block; margin-bottom: var(--sp-2); }
 .hero__title {
   font-family: var(--font-display); font-size: var(--fs-hero); line-height: .95; color: #fff8ea;
@@ -831,7 +831,6 @@ ul, ol { margin: 0; padding: 0; list-style: none; }
 <main id="main">
 
 <!-- ============ 1. HERO ============ -->
-<div class="hero-scroll" id="heroScroll">
 <section class="hero" id="inicio" aria-labelledby="hero-title">
   <div class="hero__media" aria-hidden="true">
     <div class="hero__fallback"></div>
@@ -865,10 +864,9 @@ ul, ol { margin: 0; padding: 0; list-style: none; }
     </div>
   </div>
 
-  <a class="scroll-cue" href="#nosotros">Desliza<svg aria-hidden="true"><use href="#i-down"/></svg></a>
+  <a class="scroll-cue" href="#nosotros">Conócenos<svg aria-hidden="true"><use href="#i-down"/></svg></a>
   <span class="hero__progress" aria-hidden="true"></span>
 </section>
-</div>
 
 <!-- Marquesina -->
 <div class="marquee" aria-hidden="true">
@@ -1357,15 +1355,15 @@ function bindWa(root) {
      El video se descarga completo (blob) para que el seek sea instantáneo y confiable.
      Funciona también con "reducir movimiento": el video solo avanza cuando la persona hace scroll. */
   var video = document.getElementById('heroVideo');
-  var heroWrap = document.getElementById('heroScroll');
   var hero = document.getElementById('inicio');
-  if (video && heroWrap) {
+  if (video && hero) {
     var src = window.matchMedia('(max-width: 800px)').matches ? video.dataset.srcMovil : video.dataset.src;
     var ready = false, cur = 0, raf = null;
+    /* 0 = portada completa en pantalla, 1 = el video termina cuando la portada ya casi salió (85%) */
     var progress = function () {
-      var total = heroWrap.offsetHeight - window.innerHeight;
-      if (total <= 0) return 0;
-      return Math.min(1, Math.max(0, -heroWrap.getBoundingClientRect().top / total));
+      var r = hero.getBoundingClientRect();
+      if (r.bottom < 0) return 1;
+      return Math.min(1, Math.max(0, -r.top / (r.height * 0.85)));
     };
     var tick = function () {
       raf = null;
