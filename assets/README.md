@@ -4,7 +4,8 @@ Archivos ya procesados (recortados y comprimidos) a partir de lo que se subió:
 
 | Archivo | Origen | Dónde se usa |
 |---|---|---|
-| `hero.mp4` | hero.mp4 (optimizado para empezar a reproducir antes) | Video de fondo del hero |
+| `hero.mp4` | hero.mp4 recodificado 1080p con cuadros clave cada 4 frames | Video del hero en computador (avanza con el scroll) |
+| `hero-movil.mp4` | igual, en 720p | Video del hero en celular |
 | `hero-poster.jpg` | primer cuadro del video | Imagen mientras carga el video |
 | `logo/logo-dorado.png` | logo.png recoloreado | Encabezado, menú, pie y sello del hero |
 | `logo/logo-cafe.png` | logo.png recoloreado | Encabezado en modo claro |

@@ -73,8 +73,9 @@
   --ink: #23180e;
   --ink-soft: #5a4630;
   --ink-gold: #8a5710;
-  --wa: #25d366;
-  --wa-ink: #0b2e17;
+  --wa: #5b6b32;        /* verde oliva / musgo */
+  --wa-hover: #67793a;
+  --wa-ink: #f6eedb;
   --sample-bg: #ffd84d;
   --sample-ink: #1d1400;
 }
@@ -235,6 +236,7 @@ ul, ol { margin: 0; padding: 0; list-style: none; }
 .btn:active { transform: translate(2px, 2px); box-shadow: 1px 1px 0 0 rgba(0,0,0,.35); }
 .btn svg { width: 1.3em; height: 1.3em; flex-shrink: 0; }
 .btn--wa { --btn-bg: var(--wa); --btn-ink: var(--wa-ink); --btn-bd: var(--wa); }
+.btn--wa:hover { --btn-bg: var(--wa-hover); --btn-bd: var(--wa-hover); }
 .btn--ghost { --btn-bg: transparent; --btn-ink: var(--text); --btn-bd: var(--gold); box-shadow: none; }
 .btn--ghost:hover { --btn-bg: rgba(227,167,47,.12); box-shadow: none; }
 .btn--light { --btn-ink: var(--cream-fixed); --btn-bd: var(--gold-fixed); }
@@ -341,6 +343,17 @@ ul, ol { margin: 0; padding: 0; list-style: none; }
     linear-gradient(180deg, rgba(18,14,10,.65) 0%, rgba(18,14,10,.15) 35%, rgba(18,14,10,.55) 65%, rgba(18,14,10,.95) 100%);
 }
 .hero__content { padding-block: 8rem clamp(3.5rem, 8vw, 6rem); }
+/* Scroll-scrub: el hero queda fijo mientras el video avanza */
+.js .hero-scroll { height: 240svh; position: relative; }
+.js .hero-scroll .hero { position: sticky; top: 0; height: 100svh; min-height: 0; }
+.js .hero-scroll.is-static { height: auto; }
+.js .hero-scroll.is-static .hero { position: relative; height: auto; min-height: 100svh; }
+.hero__content { transform: translateY(calc(var(--p, 0) * -40px)); opacity: calc(1 - max(0, var(--p, 0) - .75) * 2.4); }
+.hero__progress {
+  position: absolute; left: 0; bottom: 0; height: 3px; width: 100%;
+  background: var(--gold-fixed); transform-origin: left; transform: scaleX(var(--p, 0));
+}
+@media (max-width: 800px) { .js .hero-scroll { height: 200svh; } }
 .hero__hello { font-family: var(--font-hand); color: var(--gold-fixed); font-size: clamp(1.6rem, 1.2rem + 1.5vw, 2.4rem); transform: rotate(-3deg); display: inline-block; margin-bottom: var(--sp-2); }
 .hero__title {
   font-family: var(--font-display); font-size: var(--fs-hero); line-height: .95; color: #fff8ea;
@@ -602,7 +615,7 @@ ul, ol { margin: 0; padding: 0; list-style: none; }
   padding: .45em .9em; border-radius: 999px; background: var(--surface-2); margin-bottom: var(--sp-5);
 }
 .hours__status::before { content: ""; width: 10px; height: 10px; border-radius: 50%; background: var(--text-muted); }
-.hours__status.is-open::before { background: var(--wa); box-shadow: 0 0 0 4px rgba(37,211,102,.25); }
+.hours__status.is-open::before { background: #7f9444; box-shadow: 0 0 0 4px rgba(127,148,68,.3); }
 .hours__status.is-closed::before { background: var(--ember); }
 .hours__list { display: grid; gap: 0; }
 .hours__row { display: flex; justify-content: space-between; gap: var(--sp-4); padding-block: var(--sp-4); border-bottom: 1px dashed var(--line); align-items: baseline; }
@@ -687,13 +700,13 @@ ul, ol { margin: 0; padding: 0; list-style: none; }
 .wa-float {
   position: fixed; right: max(var(--sp-4), env(safe-area-inset-right)); bottom: max(var(--sp-4), env(safe-area-inset-bottom)); z-index: var(--z-float);
   width: 60px; height: 60px; border-radius: 50%; display: grid; place-items: center;
-  background: var(--wa); color: #fff; box-shadow: 0 10px 25px -6px rgba(0,0,0,.55);
+  background: var(--wa); color: var(--wa-ink); border: 2px solid rgba(246,238,219,.25); box-shadow: 0 10px 25px -6px rgba(0,0,0,.55);
   transform: scale(.6); opacity: 0; pointer-events: none;
   transition: transform var(--dur) var(--ease-out), opacity var(--dur) ease;
 }
 .wa-float svg { width: 32px; height: 32px; }
 .wa-float.is-visible { transform: none; opacity: 1; pointer-events: auto; }
-.wa-float:hover { transform: scale(1.06); }
+.wa-float:hover { transform: scale(1.06); background: var(--wa-hover); }
 
 /* =========================================================
    REVEAL (IntersectionObserver)
@@ -794,12 +807,13 @@ ul, ol { margin: 0; padding: 0; list-style: none; }
 <main id="main">
 
 <!-- ============ 1. HERO ============ -->
+<div class="hero-scroll" id="heroScroll">
 <section class="hero" id="inicio" aria-labelledby="hero-title">
   <div class="hero__media" aria-hidden="true">
     <div class="hero__fallback"></div>
-    <video id="heroVideo" autoplay muted loop playsinline preload="metadata" poster="assets/hero-poster.jpg">
-      <source src="assets/hero.mp4" type="video/mp4">
-    </video>
+    <!-- El video avanza con el scroll. JS elige hero.mp4 (computador) o hero-movil.mp4 (celular). -->
+    <video id="heroVideo" muted playsinline preload="auto" poster="assets/hero-poster.jpg"
+           data-src="assets/hero.mp4" data-src-movil="assets/hero-movil.mp4"></video>
   </div>
 
   <div class="stamp" aria-hidden="true">
@@ -827,8 +841,10 @@ ul, ol { margin: 0; padding: 0; list-style: none; }
     </div>
   </div>
 
-  <a class="scroll-cue" href="#nosotros">Conócenos<svg aria-hidden="true"><use href="#i-down"/></svg></a>
+  <a class="scroll-cue" href="#nosotros">Desliza<svg aria-hidden="true"><use href="#i-down"/></svg></a>
+  <span class="hero__progress" aria-hidden="true"></span>
 </section>
+</div>
 
 <!-- Marquesina -->
 <div class="marquee" aria-hidden="true">
@@ -1304,9 +1320,45 @@ function bindWa(root) {
   document.querySelectorAll('.ph img').forEach(watchImg);
 
   /* ---- Video hero ---- */
+  /* ---- Video del hero controlado por el scroll ---- */
   var video = document.getElementById('heroVideo');
-  if (video) {
-    if (reduceMotion) { video.removeAttribute('autoplay'); video.pause(); }
+  var heroWrap = document.getElementById('heroScroll');
+  var hero = document.getElementById('inicio');
+  if (video && heroWrap) {
+    var movil = window.matchMedia('(max-width: 800px)').matches;
+    video.src = movil ? video.dataset.srcMovil : video.dataset.src;
+    if (reduceMotion) {
+      heroWrap.classList.add('is-static');           // sin movimiento: queda el póster
+      video.preload = 'none';
+    } else {
+      var ready = false, cur = 0, raf = null;
+      var progress = function () {
+        var total = heroWrap.offsetHeight - window.innerHeight;
+        if (total <= 0) return 0;
+        return Math.min(1, Math.max(0, -heroWrap.getBoundingClientRect().top / total));
+      };
+      var tick = function () {
+        raf = null;
+        var p = progress();
+        hero.style.setProperty('--p', p.toFixed(4));
+        if (!ready) return;
+        var target = p * (video.duration - 0.05);
+        cur += (target - cur) * 0.2;                    // suavizado
+        if (Math.abs(target - cur) < 0.005) cur = target;
+        if (!video.seeking && Math.abs(video.currentTime - cur) > 0.015) video.currentTime = cur;
+        if (cur !== target) raf = requestAnimationFrame(tick);
+      };
+      var request = function () { if (!raf) raf = requestAnimationFrame(tick); };
+      video.addEventListener('loadedmetadata', function () { ready = true; request(); });
+      video.addEventListener('seeked', request);
+      /* iOS/Safari: un play()+pause() inicial habilita el dibujado de cuadros al hacer seek */
+      var pr = video.play();
+      if (pr && pr.then) pr.then(function () { video.pause(); request(); }).catch(function () {});
+      else video.pause();
+      window.addEventListener('scroll', request, { passive: true });
+      window.addEventListener('resize', request);
+      request();
+    }
   }
 
   /* ---- Header al hacer scroll + WhatsApp flotante ---- */
