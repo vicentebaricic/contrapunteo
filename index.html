@@ -423,6 +423,29 @@ ul, ol { margin: 0; padding: 0; list-style: none; }
 .pillar h3 { font-family: var(--font-display); font-size: 1.2rem; margin-bottom: var(--sp-1); }
 .pillar p { font-size: var(--fs-sm); color: var(--text-muted); }
 
+.collage-wrap { position: relative; }
+/* Parche de la bandera (tela cosida) */
+.patch { position: relative; z-index: 3; width: 210px; margin: -2.25rem auto 0; }
+.patch__cloth {
+  position: relative; transform: rotate(-7deg); transition: transform var(--dur) var(--ease-out);
+  filter: drop-shadow(0 14px 18px rgba(0,0,0,.45));
+}
+.patch:hover .patch__cloth { transform: rotate(-4deg) scale(1.03); }
+.patch__cloth img { width: 100%; height: auto; border-radius: 3px; }
+.patch__cloth::after {                 /* costura */
+  content: ""; position: absolute; inset: 7px; border: 2px dashed rgba(255, 248, 234, .9);
+  border-radius: 2px; pointer-events: none;
+}
+.patch__tape {
+  position: absolute; top: -12px; left: 50%; width: 78px; height: 24px; z-index: 1;
+  transform: translateX(-50%) rotate(4deg); background: rgba(227,167,47,.6); box-shadow: 0 2px 5px rgba(0,0,0,.25);
+}
+.patch__note {
+  display: block; margin-top: var(--sp-3); transform: rotate(-4deg);
+  font-family: var(--font-hand); font-size: clamp(1.25rem, 1.1rem + .6vw, 1.6rem); line-height: 1.1; color: var(--gold);
+  text-align: center; text-shadow: 0 2px 10px var(--bg);
+}
+@media (min-width: 900px) { .patch { position: absolute; margin: 0; left: -48px; bottom: -56px; width: 230px; } }
 .collage { display: grid; grid-template-columns: 1fr 1fr; grid-template-rows: auto auto; gap: var(--sp-3); }
 .collage .ph:nth-child(1) { grid-column: 1 / -1; aspect-ratio: 16 / 10; }
 .collage .ph:nth-child(2), .collage .ph:nth-child(3) { aspect-ratio: 1 / 1; }
@@ -692,6 +715,8 @@ ul, ol { margin: 0; padding: 0; list-style: none; }
 .footer a { text-decoration: none; }
 .footer a:hover { color: var(--gold-fixed); text-decoration: underline; text-underline-offset: 3px; }
 .footer ul { display: grid; gap: var(--sp-2); }
+.footer__made { display: inline-flex; align-items: center; gap: .6em; }
+.footer__made img { width: 36px; height: auto; border-radius: 2px; outline: 1px dashed rgba(255,248,234,.6); outline-offset: -3px; transform: rotate(-4deg); }
 .footer__bottom { margin-top: var(--sp-7); padding-top: var(--sp-5); border-top: 1px solid rgba(227,167,47,.15); display: flex; flex-wrap: wrap; justify-content: space-between; gap: var(--sp-3); color: #9a8a70; font-size: var(--fs-xs); }
 @media (min-width: 800px) { .footer__grid { grid-template-columns: 1.4fr 1fr 1fr 1fr; } .footer { padding-bottom: var(--sp-7); } }
 
@@ -879,10 +904,19 @@ ul, ol { margin: 0; padding: 0; list-style: none; }
       <span class="hand reveal">Descubre la verdadera esencia de Venezuela… ¡te esperamos!</span>
     </div>
 
+    <div class="collage-wrap">
     <div class="collage">
       <figure class="ph reveal reveal--zoom" data-ph="assets/nosotros/nosotros-1.jpg"><img src="assets/nosotros/nosotros-1.jpg" alt="Carne a la parrilla entre las llamas" loading="lazy" width="1000" height="1333"></figure>
       <figure class="ph reveal reveal--zoom" style="--d:120ms" data-ph="assets/nosotros/nosotros-2.jpg"><img src="assets/nosotros/nosotros-2.jpg" alt="Cocinero atento al fuego de leña" loading="lazy" width="900" height="900"></figure>
       <figure class="ph reveal reveal--zoom" style="--d:220ms" data-ph="assets/nosotros/nosotros-3.jpg"><img src="assets/nosotros/nosotros-3.jpg" alt="Cachapa rellena de carne con cebolla y cilantro" loading="lazy" width="640" height="640"></figure>
+    </div>
+    <figure class="patch reveal reveal--zoom" style="--d:320ms">
+      <div class="patch__cloth">
+        <span class="patch__tape" aria-hidden="true"></span>
+        <img src="assets/venezuela/bandera.jpg" alt="Bandera de Venezuela hecha a mano con retazos de tela a cuadros" loading="lazy" width="600" height="385">
+      </div>
+      <figcaption class="patch__note">¡Sabor 100% venezolano!</figcaption>
+    </figure>
     </div>
   </div>
 </section>
@@ -1125,7 +1159,7 @@ ul, ol { margin: 0; padding: 0; list-style: none; }
     </div>
     <div class="footer__bottom">
       <span>© <span id="year">2026</span> Contrapunteo. Todos los derechos reservados.</span>
-      <span>Hecho con fuego lento en Chicureo.</span>
+      <span class="footer__made"><img src="assets/venezuela/bandera.jpg" alt="" width="36" height="23" loading="lazy">Hecho con fuego lento y corazón venezolano en Chicureo.</span>
     </div>
   </div>
 </footer>

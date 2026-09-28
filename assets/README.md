@@ -17,6 +17,7 @@ Archivos ya procesados (recortados y comprimidos) a partir de lo que se subió:
 | `nosotros/nosotros-3.jpg` | cachapa.jpg.webp | Collage |
 | `fusion/fusion.jpg` | cuadro del video (seg. 5,6) | Sección "La fusión" |
 | `chef/chef.jpg` | chef.jpg | Sección del chef |
+| `venezuela/bandera.jpg` | banderavenezuela.jpg (recortada) | Parche en "Quiénes somos" y en el pie |
 | `cta-fondo.jpg` | jesson-mata-…-unsplash.jpg | Fondo del cierre de reservas |
 
 ## Pendiente
