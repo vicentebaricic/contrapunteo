@@ -329,6 +329,7 @@ ul, ol { margin: 0; padding: 0; list-style: none; }
 }
 .hero__media { position: absolute; inset: 0; z-index: -2; }
 .hero__media video, .hero__media .hero__fallback { width: 100%; height: 100%; object-fit: cover; }
+.hero__media video { position: absolute; inset: 0; z-index: 1; }  /* el video va sobre la capa de respaldo */
 .hero__fallback {
   position: absolute; inset: 0;
   background:
@@ -1344,15 +1345,20 @@ function bindWa(root) {
       if (cur !== target) raf = requestAnimationFrame(tick);
     };
     var request = function () { if (!raf) raf = requestAnimationFrame(tick); };
+    /* iOS/Safari no carga el video hasta que se le da play(): play()+pause() lo "despierta"
+       y habilita el dibujado de cuadros al hacer seek. */
+    var wake = function () {
+      var pr = video.play();
+      if (pr && pr.then) pr.then(function () { video.pause(); request(); }).catch(function () {});
+      else video.pause();
+    };
     var start = function (url) {
       video.src = url;
       video.load();
-      video.addEventListener('loadeddata', function () {
-        /* iOS/Safari: play()+pause() inicial habilita el dibujado de cuadros al hacer seek */
-        var pr = video.play();
-        var done = function () { video.pause(); ready = true; request(); };
-        if (pr && pr.then) pr.then(done).catch(done); else done();
-      }, { once: true });
+      video.addEventListener('loadedmetadata', function () { ready = true; request(); }, { once: true });
+      wake();
+      /* Respaldo (p. ej. iPhone en ahorro de batería): reintenta con el primer toque */
+      window.addEventListener('touchstart', function () { if (video.readyState < 2) wake(); }, { once: true, passive: true });
     };
     video.pause();
     video.addEventListener('seeked', request);
